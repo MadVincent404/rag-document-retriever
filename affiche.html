@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affiche RAG Multi-Source</title>
+    <style>
+        /* Configuration de la page A4 */
+        @media print {
+            body { background-color: white !important; margin: 0; padding: 0; }
+            .page { margin: 0 !important; box-shadow: none !important; }
+            width: 210mm; height: 297mm; page-break-after: always;
+            -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+        }
+        .hero-image, .qr-code, .header, .kpi-bar, .pillar, .badge, .footer, .info-card {
+            -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+        }
+
+        @page { size: A4 portrait; margin: 0mm; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #e0e0e0; display: flex; flex-direction: column; align-items: center; }
+
+        /* Style de la feuille A4 */
+        .page { width: 210mm; height: 297mm; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin: 10mm 0; position: relative; display: flex; flex-direction: column; overflow: hidden; page-break-after: always; }
+
+        /* --- STYLES DU RECTO --- */
+        .header { background-color: #4a7c59;; /* Vert Emeraude */ color: white; padding: 25px 40px; text-align: center; }
+        .header h1 { font-size: 38px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        .header h2 { font-size: 18px; font-weight: 400; opacity: 0.9; }
+
+        .content { padding: 30px 40px; flex-grow: 1; display: flex; flex-direction: column; gap: 25px; }
+
+        .hero-image { width: 100%; height: 320px; /* Tu peux réduire cette valeur si ça fait trop d'espace vide */ border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); background-color: #F8FAFC; background-image: url('assets/site.png'); background-size: contain; background-position: center; background-repeat: no-repeat; }
+
+        /* Barre de KPIs */
+        .kpi-bar { display: flex; justify-content: space-between; background-color: #4a7c59;; color: white; border-radius: 8px; padding: 15px 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .kpi-item { text-align: center; flex: 1; border-right: 1px solid rgba(255,255,255,0.2); }
+        .kpi-item:last-child { border-right: none; }
+        .kpi-value { font-size: 26px; font-weight: bold; color: #d4a574; /* Accent jaune doré */ margin-bottom: 2px; }
+        .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Section des 3 piliers */
+        .pillars { display: flex; justify-content: space-between; gap: 20px; }
+        .pillar { flex: 1; background: #F8FAFC; padding: 15px; border-top: 4px solid #4a7c59;; border-radius: 4px; }
+        .pillar h3 { color: #4a7c59;; font-size: 15px; margin-bottom: 8px; text-transform: uppercase; }
+        .pillar p { color: #334155; font-size: 12px; line-height: 1.4; }
+
+        /* Section Stack Technique */
+        .tech-stack { margin-top: auto; border-top: 1px solid #ddd; padding-top: 15px; }
+        .tech-stack h3 { color: #4A4A4A; font-size: 15px; margin-bottom: 12px; text-align: center; }
+        .badges { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
+        .badge { background-color: #4a7c59;; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+
+        .footer { background-color: #1E293B; color: white; text-align: center; padding: 12px; font-size: 13px; font-weight: bold; }
+
+        /* --- STYLES DU VERSO --- */
+        .verso-container { padding: 50px 40px; flex-grow: 1; display: flex; flex-direction: column; }
+        .verso-header { text-align: center; margin-bottom: 40px; }
+        .verso-header h1 { color: #4a7c59;; font-size: 36px; }
+
+        .verso-layout { display: flex; gap: 40px; flex-grow: 1; }
+
+        /* Colonne Gauche - QR + Liens */
+        .verso-left { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .qr-code { width: 250px; height: 250px; margin-bottom: 30px; background-image: url('assets/qrcode.svg'); background-size: contain; background-position: center; background-repeat: no-repeat; border: 2px solid #ddd; padding: 10px; border-radius: 8px; }
+        .links { background: #F8FAFC; padding: 20px; border-radius: 8px; border-left: 5px solid #4a7c59;; width: 100%; }
+        .links p { font-size: 14px; margin: 8px 0; color: #333; }
+        .links a { color: #4a7c59;; text-decoration: none; font-weight: bold; }
+
+        /* Colonne Droite - Défis + Améliorations */
+        .verso-right { flex: 1.2; display: flex; flex-direction: column; gap: 25px; }
+        .info-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .info-card h3 { color: #1E293B; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid #4a7c59;; padding-bottom: 5px; display: inline-block; }
+        .info-card ul { padding-left: 20px; color: #4A4A4A; font-size: 14px; line-height: 1.6; }
+        .info-card li { margin-bottom: 10px; }
+        .info-card li strong { color: #10B981; }
+    </style>
+</head>
+<body>
+    <!-- RECTO -->
+    <div class="page">
+        <div class="header">
+            <h1>RAG Multi-Source</h1>
+            <h2>Recherche Augmentée Audio + Docs + LLM</h2>
+        </div>
+        <div class="content">
+            <div class="hero-image"></div>
+            <div class="kpi-bar">
+                <div class="kpi-item">
+                    <div class="kpi-value">4</div>
+                    <div class="kpi-label">Catégories Routées</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-value">ChromaDB</div>
+                    <div class="kpi-label">Vector Store Persistant</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-value">Temps Réel</div>
+                    <div class="kpi-label">Ollama + Groq Llama3.3</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-value">100%</div>
+                    <div class="kpi-label">Feedback + Anti-Injection</div>
+                </div>
+            </div>
+            <div class="pillars">
+                <div class="pillar">
+                    <h3>Routeur Sémantique</h3>
+                    <p>Classification automatique des requêtes en 4 catégories : Legal, Research, Technical, Audio.</p>
+                    <p style="margin-top: 5px;"><strong>Focus :</strong> Extraction précise pour matching vectoriel optimal.</p>
+                </div>
+                <div class="pillar">
+                    <h3>RAG Hybride</h3>
+                    <p>Recherche sur PDFs/MD, transcripts audio YouTube (Whisper), reranking Flashrank.</p>
+                    <p style="margin-top: 5px;"><strong>Stack :</strong> ChromaDB + Nomic-Embed + Llama3.3 70B Groq.</p>
+                </div>
+                <div class="pillar">
+                    <h3>Dashboard Sécurité</h3>
+                    <p>Feedback utilisateur tracé, blocage prompt injection par Regex compilées.</p>
+                    <p style="margin-top: 5px;"><strong>Approche :</strong> Streamlit + CSV logs + Sanitization stricte.</p>
+                </div>
+            </div>
+            <div class="tech-stack">
+                <h3>Stack Technique</h3>
+                <div class="badges">
+                    <div class="badge">Python</div>
+                    <div class="badge">Streamlit</div>
+                    <div class="badge">LangChain</div>
+                    <div class="badge">ChromaDB</div>
+                    <div class="badge">Ollama</div>
+                    <div class="badge">Groq Llama3.3</div>
+                    <div class="badge">Faster-Whisper</div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">Tournez la page pour tester la démo et découvrir les coulisses du projet</div>
+    </div>
+
+    <!-- VERSO -->
+    <div class="page">
+        <div class="verso-container">
+            <div class="verso-header">
+                <h1>Les coulisses du projet</h1>
+            </div>
+            <div class="verso-layout">
+                <div class="verso-left">
+                    <div class="qr-code"></div>
+                    <div class="links">
+                        <p><strong>Testez l'application :</strong> Scannez le QR Code ci-dessus.</p>
+                        <p style="margin-top: 15px;"><strong>Candidat :</strong> Vincent Le Brenn</p>
+                        <p><strong>Code Source :</strong> <a href="https://github.com/MadVincent404/rag-document-retriever">GitHub</a></p>
+                    </div>
+                </div>
+                <div class="verso-right">
+                    <div class="info-card">
+                        <h3>Difficultés Surmontées</h3>
+                        <ul>
+                            <li><strong>Sécurisation LLM :</strong> Détection robuste des attaques "Prompt Injection" (ignore previous instructions) via Regex compilées et clauses système.</li>
+                            <li><strong>Indexation Audio :</strong> Transcription Whisper CUDA → ChromaDB en chunks 60s, avec metadata vidéo (YOLOv1 from Scratch...).</li>
+                            <li><strong>Routeur Multi-Catégories :</strong> Flux LangChain asynchrone forçant JSON strict pour filtrage sémantique (Legal/Research/Technical/Audio).</li>
+                        </ul>
+                    </div>
+                    <div class="info-card">
+                        <h3>Prochaines Étapes (En cours)</h3>
+                        <ul>
+                            <li><strong>Multi-LLM :</strong> Intégration agents (Groq + Ollama local) avec fallback et évaluation automatique.</li>
+                            <li><strong>ML Feedback :</strong> Fine-tuning embeddings sur logs feedback pour personnalisation utilisateur.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
