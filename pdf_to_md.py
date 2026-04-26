@@ -1,4 +1,3 @@
-# pdf_to_md.py
 import time
 import re
 from pathlib import Path
@@ -52,7 +51,7 @@ def pdf_has_heavy_images(pdf_path: Path, pixel_threshold: int = 50_000_000) -> b
 
 def convert_with_pymupdf(pdf_path: Path, md_path: Path) -> bool:
     try:
-        import fitz  # pip install pymupdf
+        import fitz 
 
         doc = fitz.open(str(pdf_path))
         pages = []

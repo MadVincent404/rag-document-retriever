@@ -1,4 +1,3 @@
-# wav_index_from_json.py — uniquement embeddings + ChromaDB, pas de Whisper
 import json
 from pathlib import Path
 

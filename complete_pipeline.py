@@ -1,4 +1,3 @@
-# pipeline_full.py
 import subprocess
 import sys
 import shutil

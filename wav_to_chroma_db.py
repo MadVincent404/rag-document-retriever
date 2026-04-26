@@ -12,8 +12,8 @@ from langchain_chroma import Chroma
 WAV_DIR = "./data/wav/"
 CHROMA_DB_DIR = "./data/chroma_db"
 EMB_MODEL_NAME = "nomic-embed-text"
-WHISPER_NAME = "small"  # "medium" si tu veux plus de précision
-FORCED_LANG = "en"  # None pour auto-détection
+WHISPER_NAME = "small"  
+FORCED_LANG = "en"
 CACHE_PATH = "./data/wav/.transcription_cache.json"
 TRANSCRIPTS_DIR = "./data/wav/transcripts/"  # stockage JSON
 
@@ -116,7 +116,7 @@ def segments_to_docs(segments, wav_path: Path, detected_lang: str, duration: flo
             current_chunk = []
             chunk_start = seg["end"]
 
-    # Dernier chunk (moins d'une fenêtre)
+    # Dernier chunk
     if current_chunk:
         text = " ".join(s["text"] for s in current_chunk)
         chunk_end = current_chunk[-1]["end"]
